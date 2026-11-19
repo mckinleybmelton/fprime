@@ -60,3 +60,12 @@ event DpMemReceived(
   severity activity low \
   id 8 \
   format "Received {} bytes for DP"
+
+@ Signal Output exceeded the configured high threshold (REQ-HM-003)
+event HighThresholdExceeded(
+                              $value: F32
+                              threshold: F32
+                            ) \
+  severity warning high \
+  id 9 \
+  format "Output {f} exceeded high threshold {f}"
