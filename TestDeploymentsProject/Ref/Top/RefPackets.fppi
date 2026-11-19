@@ -75,14 +75,19 @@ telemetry packets RefPackets {
   packet SigGenSum id 4 group 1 {
     SG1.Output
     SG1.Type
+    SG1.HighThreshold
     SG2.Output
     SG2.Type
+    SG2.HighThreshold
     SG3.Output
     SG3.Type
+    SG3.HighThreshold
     SG4.Output
     SG4.Type
+    SG4.HighThreshold
     SG5.Output
     SG5.Type
+    SG5.HighThreshold
   }
 
   packet SystemRes1 id 5 group 2 {
