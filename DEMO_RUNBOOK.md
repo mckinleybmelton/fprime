@@ -6,8 +6,8 @@ Use with `DEMO_PROMPTS.md` and the Cursor public-sector FE interview prep.
 
 | PR | Branch | What it proves |
 | --- | --- | --- |
-| Setup | `cursor/pilot-setup-f241` | Team inherits governed workflow by cloning |
-| Ticket dry-run | `cursor/signalgen-dry-run-f241` | One ticket → tested, traced change (bots + matrix) |
+| Setup ([#1](https://github.com/mckinleybmelton/fprime/pull/1)) | `cursor/pilot-setup-f241` | Team inherits governed workflow by cloning |
+| Ticket dry-run ([#2](https://github.com/mckinleybmelton/fprime/pull/2)) | `cursor/signalgen-dry-run-f241` | One ticket → tested, traced change (bots + matrix) |
 
 ## Before the room
 
@@ -32,7 +32,7 @@ Use with `DEMO_PROMPTS.md` and the Cursor public-sector FE interview prep.
    git checkout after-tests -- TestDeploymentsProject/Ref/SignalGen
    ```
 
-4. Pre-run PR for Bugbot / Security Review: the **dry-run** PR (ticket PR), not the setup PR.
+4. Pre-run PR for Bugbot / Security Review: https://github.com/mckinleybmelton/fprime/pull/2 (ticket dry-run), not setup https://github.com/mckinleybmelton/fprime/pull/1.
 5. Activate toolchain: `source fprime-venv/bin/activate` (and Rust 1.87+ on PATH if building Ref fully).
 
 ## Framing (~5 min) — SignalGen filled in
