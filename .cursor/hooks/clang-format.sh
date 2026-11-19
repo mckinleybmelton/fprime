@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Post-edit formatter — format only changed line ranges, never the whole file.
-# Full-file clang-format -i rewrites legacy F Prime spacing (e.g. `Class ::method`)
-# and pollutes ticket diffs / breaks follow-up patches.
+# Post-edit formatter — format only a uniquely located edit range.
+# Never whole-file clang-format -i (rewrites F Prime `Class ::method` spacing).
+# If new_string is missing, empty, tiny, or appears more than once, no-op.
 # afterFileEdit input: file_path + edits[{old_string,new_string}].
 set -euo pipefail
 
@@ -26,8 +26,7 @@ else
   exit 0
 fi
 
-# Build --lines=start:end args from edit hunks present in the file after the edit.
-# If we cannot locate any hunk, do nothing (do not fall back to whole-file -i).
+# Only format when each new_string uniquely identifies the edited site.
 mapfile -t line_args < <(
   printf '%s' "$input" | python3 -c '
 import json, sys
@@ -51,20 +50,37 @@ def line_of(pos: int) -> int:
             return i + 1
     return max(len(lines), 1)
 
+MIN_UNIQUE = 8  # skip tiny/common snippets that match everywhere
 ranges = []
 for edit in edits:
-    new = edit.get("new_string")
-    if not new:
+    new = edit.get("new_string") or ""
+    old = edit.get("old_string") or ""
+    # Prefer a unique anchor: new_string if distinctive, else old->new context.
+    anchor = new
+    if len(anchor.strip()) < MIN_UNIQUE:
+        # Try a bit of surrounding uniqueness from old_string prefix/suffix in file
+        # After edit, old is gone; skip rather than guessing.
         continue
+    hits = []
     start = 0
     while True:
-        idx = text.find(new, start)
+        idx = text.find(anchor, start)
         if idx < 0:
             break
-        lo = line_of(idx)
-        hi = line_of(idx + max(len(new) - 1, 0))
-        ranges.append((lo, hi))
-        start = idx + max(len(new), 1)
+        hits.append(idx)
+        start = idx + max(len(anchor), 1)
+        if len(hits) > 1:
+            break
+    # Ambiguous or missing: do not format (avoids rewriting unrelated copies).
+    if len(hits) != 1:
+        continue
+    idx = hits[0]
+    lo = line_of(idx)
+    hi = line_of(idx + max(len(anchor) - 1, 0))
+    ranges.append((lo, hi))
+
+if not ranges:
+    raise SystemExit(0)
 
 merged = []
 for lo, hi in sorted(set(ranges)):

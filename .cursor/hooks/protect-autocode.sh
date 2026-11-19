@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Deny edits to F Prime autocoded / build-cache files.
-# Covers Write/StrReplace/ApplyPatch and similar: paths may be in tool_input
-# fields or only inside an ApplyPatch body (`*** Update File: ...`).
+# Covers Write/StrReplace/ApplyPatch: only treat explicit path fields and
+# ApplyPatch/diff file headers as edit targets — never tokens that merely
+# appear inside file contents (e.g. #include "...Ac.hpp" in SignalGen.hpp).
 set -euo pipefail
 
 input=$(cat)
@@ -19,20 +20,12 @@ paths=$(echo "$input" | jq -r '
   ] | map(select(. != null and . != "")) | .[]
 ' 2>/dev/null || true)
 
-# Paths embedded in ApplyPatch / unified-diff style headers inside the payload.
+# Paths embedded in ApplyPatch / unified-diff style headers only (not body text).
 embedded=$(
   printf '%s\n' "$input" \
     | grep -Eo '\*\*\* (Update|Add|Delete) File:[[:space:]]*[^\\"[:space:]]+|(\+\+\+|---) [ab]/[^\\"[:space:]]+' \
     2>/dev/null \
     | sed -E 's/^\*\*\* (Update|Add|Delete) File:[[:space:]]+//; s/^(\+\+\+|---) [ab]\///' \
-  || true
-)
-
-# Last-resort: any autocode-looking path token anywhere in the tool payload.
-fallback=$(
-  printf '%s\n' "$input" \
-    | grep -Eo '[^[:space:]\\"'\''<>]+(build-fprime-[^[:space:]\\"'\''<>]*|[^[:space:]\\"'\''<>]*Ac\.(hpp|cpp))' \
-    2>/dev/null \
   || true
 )
 
@@ -53,7 +46,7 @@ while IFS= read -r p; do
     blocked="$p"
     break
   fi
-done <<< "$(printf '%s\n%s\n%s\n' "${paths:-}" "${embedded:-}" "${fallback:-}")"
+done <<< "$(printf '%s\n%s\n' "${paths:-}" "${embedded:-}")"
 
 if [ -n "$blocked" ]; then
   jq -n \

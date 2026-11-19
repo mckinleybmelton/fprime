@@ -20,7 +20,7 @@ deny_cmd() {
 }
 
 # Destructive filesystem / git
-if echo "$command" | grep -Eq '(^|[[:space:];|&])(rm[[:space:]]+-rf|rm[[:space:]]+-fr)([[:space:];|&]|$)'; then
+if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)(rm[[:space:]]+-rf|rm[[:space:]]+-fr)([[:space:];|&]|$)'; then
   deny_cmd "destructive rm -rf"
 fi
 if echo "$command" | grep -Eq 'git[[:space:]]+push[[:space:]]+.*--force|git[[:space:]]+push[[:space:]]+-f([[:space:]]|$)'; then
@@ -30,15 +30,20 @@ if echo "$command" | grep -Eq 'git[[:space:]]+reset[[:space:]]+--hard'; then
   deny_cmd "hard reset"
 fi
 
-# Unexpected outbound network from the agent shell (allow package managers used in setup only if needed live; demo blocks curl/wget/nc).
-# Also match absolute-path forms (/usr/bin/curl) that skip a bare-token boundary.
+# Unexpected outbound network (including /usr/bin/curl forms).
 if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)(curl|wget|nc|ncat|ssh|scp|sftp)([[:space:];|&]|$)'; then
   deny_cmd "outbound network tool"
 fi
 
-# Block shell redirects / tee into autocoded or build-cache paths (bypass of preToolUse).
-if echo "$command" | grep -Eq '(>|>>|[[:space:]]tee([[:space:]]|$))' \
+# Block shell writes into autocoded / build-cache paths (bypass of preToolUse).
+# - Match tee at BOL, after separators, or path-qualified (/usr/bin/tee).
+# - Match stdout redirects (>/>>) into those paths, but NOT stderr (2>, &>, 2>&1).
+if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)tee([[:space:]]|$)' \
   && echo "$command" | grep -Eq 'Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/'; then
+  deny_cmd "write to autocoded/build-cache path"
+fi
+# stdout redirect to autocode path: '>' or '>>' not preceded by a digit (excludes 2>)
+if echo "$command" | grep -Eq '(^|[^0-9&])>>?[[:space:]]*[^|&;[:space:]]*(Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/)'; then
   deny_cmd "write to autocoded/build-cache path"
 fi
 
