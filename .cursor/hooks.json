@@ -4,7 +4,7 @@
     "preToolUse": [
       {
         "command": ".cursor/hooks/protect-autocode.sh",
-        "matcher": "Write|Delete|StrReplace|EditNotebook"
+        "matcher": "Write|Delete|StrReplace|EditNotebook|ApplyPatch|Edit|DeleteFile"
       }
     ],
     "beforeReadFile": [

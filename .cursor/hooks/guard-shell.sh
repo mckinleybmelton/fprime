@@ -31,8 +31,15 @@ if echo "$command" | grep -Eq 'git[[:space:]]+reset[[:space:]]+--hard'; then
 fi
 
 # Unexpected outbound network from the agent shell (allow package managers used in setup only if needed live; demo blocks curl/wget/nc).
-if echo "$command" | grep -Eq '(^|[[:space:];|&])(curl|wget|nc|ncat|ssh|scp|sftp)([[:space:];|&]|$)'; then
+# Also match absolute-path forms (/usr/bin/curl) that skip a bare-token boundary.
+if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)(curl|wget|nc|ncat|ssh|scp|sftp)([[:space:];|&]|$)'; then
   deny_cmd "outbound network tool"
+fi
+
+# Block shell redirects / tee into autocoded or build-cache paths (bypass of preToolUse).
+if echo "$command" | grep -Eq '(>|>>|[[:space:]]tee([[:space:]]|$))' \
+  && echo "$command" | grep -Eq 'Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/'; then
+  deny_cmd "write to autocoded/build-cache path"
 fi
 
 echo '{"permission":"allow"}'
