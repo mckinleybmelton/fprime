@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/protect-autocode.sh",
+        "matcher": "Write|Delete|StrReplace|EditNotebook"
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "command": ".cursor/hooks/block-controlled.sh",
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/guard-shell.sh"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/clang-format.sh"
+      }
+    ]
+  }
+}

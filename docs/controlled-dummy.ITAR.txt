@@ -1,0 +1,8 @@
+ITAR
+EXPORT CONTROLLED — DUMMY FILE FOR PILOT DEMO ONLY
+
+This file contains no real technical data. It exists solely so the Cursor
+beforeReadFile hook (block-controlled.sh) can demonstrate denying agent
+reads of export-controlled or CUI-marked content.
+
+Do not put real ITAR, EAR, or CUI content in this repository.
