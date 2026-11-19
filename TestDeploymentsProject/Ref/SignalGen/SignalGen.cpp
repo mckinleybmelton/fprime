@@ -38,6 +38,8 @@ SignalGen ::SignalGen(const char* name)
       sigPairHistory(),
       running(false),
       skipOne(false),
+      highThreshold(0.0f),
+      highThresholdArmed(false),
       m_dpInProgress(false),
       m_numDps(0),
       m_currDp(0),
@@ -129,6 +131,12 @@ void SignalGen::schedIn_handler(FwIndexType portNum, /*!< The port number*/
     this->tlmWrite_History(this->sigHistory);
     this->tlmWrite_PairHistory(this->sigPairHistory);
     this->tlmWrite_Info(sigInfo);
+    this->tlmWrite_HighThreshold(this->highThreshold);
+
+    // REQ-HM-003: warn when Output exceeds the armed high threshold
+    if (this->highThresholdArmed && (value > this->highThreshold)) {
+        this->log_WARNING_HI_HighThresholdExceeded(value, this->highThreshold);
+    }
 
     // if a Data product is being generated, store a record
     if (this->m_dpInProgress) {
@@ -196,6 +204,13 @@ void SignalGen::Skip_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
                                 U32 cmdSeq           /*!< The command sequence number*/
 ) {
     this->skipOne = true;
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void SignalGen::SetHighThreshold_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, F32 threshold) {
+    this->highThreshold = threshold;
+    this->highThresholdArmed = true;
+    this->tlmWrite_HighThreshold(this->highThreshold);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

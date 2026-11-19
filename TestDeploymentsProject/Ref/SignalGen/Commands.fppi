@@ -29,3 +29,9 @@ async command Dp(
                   ) \
   opcode 3
 
+@ Set high threshold for signal Output (REQ-HM-001)
+async command SetHighThreshold(
+                                 threshold: F32
+                               ) \
+  opcode 4
+
