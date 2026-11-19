@@ -38,14 +38,17 @@ fi
 # Block shell writes into autocoded / build-cache paths (bypass of preToolUse).
 # Deny when the redirect/tee DESTINATION is an autocode path — not merely when
 # the command mentions build-fprime while redirecting elsewhere (e.g. 2>/dev/null).
-# Covers: > >> >| 1> 1>> &> >& 2> 2>> into *Ac.* / build-fprime-* / build-artifacts.
-# Allows: 2>&1 (fd dup) and redirects whose target is not an autocode path.
+# Covers spaced and glued forms (> >> >| 1> &> >& 2>) into *Ac.* /
+# build-fprime-* / build-artifacts. Redirects may sit directly on the
+# previous token (`echo>file`). Allows 2>&1 and redirects whose target
+# is not an autocode path (`ls build-fprime-… 2>/dev/null`).
 if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)tee([[:space:]]|$)' \
   && echo "$command" | grep -Eq 'Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/'; then
   deny_cmd "write to autocoded/build-cache path"
 fi
+# Longer operators first so >| is not consumed as a bare >.
 if echo "$command" | grep -Eq \
-  '(^|[[:space:];|&])(>>?|>\||&>|>&|1>>?|2>>?)[[:space:]]*[^|&;[:space:]]*(Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/)'; then
+  '(>\||&>|>&|1>>|1>|2>>|2>|>>|>)[[:space:]]*[^|&;[:space:]]*(Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/)'; then
   deny_cmd "write to autocoded/build-cache path"
 fi
 
