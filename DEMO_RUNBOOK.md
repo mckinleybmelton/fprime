@@ -1,22 +1,25 @@
 # SignalGen demo runbook (~17 minutes + framing)
 
-Use with `DEMO_PROMPTS.md` and the Cursor public-sector FE interview prep.
+Use with `DEMO_SCRIPTS.md` (five Option A rehearsals) and `DEMO_PROMPTS.md`.
 
-## Two PRs (keep them separate in the story)
+## What is already merged
 
-| PR | Branch | What it proves |
+| Artifact | Where | What it proves |
 | --- | --- | --- |
-| Setup ([#1](https://github.com/mckinleybmelton/fprime/pull/1)) | `cursor/pilot-setup-f241` | Team inherits governed workflow by cloning |
-| Ticket dry-run ([#2](https://github.com/mckinleybmelton/fprime/pull/2)) | `cursor/signalgen-dry-run-f241` | One ticket → tested, traced change (bots + matrix) |
+| Setup ([#1](https://github.com/mckinleybmelton/fprime/pull/1), merged) | `devel` | Team inherits the governed workflow by cloning |
+| Ticket dry-run ([#2](https://github.com/mckinleybmelton/fprime/pull/2)) | `cursor/signalgen-dry-run-f241` | One ticket goes to a tested, traced change (bots + matrix) |
+
+The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the receipt you show if the build stalls.
 
 ## Before the room
 
 1. Privacy Mode on; mention it in framing.
-2. Start the **live** demo from the setup branch (workflow only — no SignalGen feature yet):
+2. Start the **live** demo from `devel` (workflow only — no SignalGen feature yet):
 
    ```bash
    git fetch origin
-   git checkout cursor/pilot-setup-f241
+   git checkout devel
+   git pull origin devel
    source fprime-venv/bin/activate
    ```
 
@@ -48,7 +51,7 @@ Use with `DEMO_PROMPTS.md` and the Cursor public-sector FE interview prep.
 
 | Clock | Stage | Action | Coaching line |
 | --- | --- | --- | --- |
-| 0:00–1:30 | Intake | Open setup PR / `TICKET.md`, `REQUIREMENTS.md`, `.cursor/hooks.json` | Rules = guidance; hooks = enforcement; skills load on demand |
+| 0:00–1:30 | Intake | On `devel`: `TICKET.md`, `REQUIREMENTS.md`, `.cursor/hooks.json`. Paste scripts live in `DEMO_SCRIPTS.md` Demo 1 | Rules = guidance; hooks = enforcement; skills load on demand |
 | 1:30–5:00 | Plan | Paste Plan prompt; edit plan; approve | Steer at the plan |
 | 5:00–10:00 | Build | Paste Build prompt; FPP → generate → tests → impl | F Prime's own TDD loop; big model plan, fast model type |
 | 10:00–11:30 | Guardrail | Paste Guardrail prompt | Generated code never hand-edited |
