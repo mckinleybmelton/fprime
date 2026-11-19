@@ -208,6 +208,7 @@ void SignalGen::Skip_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
 }
 
 void SignalGen::SetHighThreshold_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, F32 threshold) {
+    // REQ-HM-001: store and arm the operator-configured high threshold
     this->highThreshold = threshold;
     this->highThresholdArmed = true;
     this->tlmWrite_HighThreshold(this->highThreshold);
