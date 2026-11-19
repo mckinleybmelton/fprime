@@ -29,3 +29,5 @@ Add a commandable high-threshold check to `Ref::SignalGen`. Operators must be ab
 - Existing telemetry already includes `Output: F32` (current Y value). Reuse that as the monitored value.
 - Follow neighboring FPP style in `Commands.fppi`, `Telemetry.fppi`, and `Events.fppi`.
 - Use generated harness macros (`ASSERT_EVENTS_*`, `ASSERT_TLM_*`) in unit tests.
+
+<!-- bot-trigger: minor noop for Bugbot/Security Review -->
