@@ -1,0 +1,12 @@
+---
+description: Conventions for F Prime components (pilot + general)
+globs: "**/*.fpp,**/*.fppi,**/*.cpp,**/*.hpp,**/test/ut/**"
+alwaysApply: false
+---
+
+- Commands, events, telemetry, and parameters are declared in FPP (`.fpp` / `.fppi`), never only in C++.
+- Each requirement gets at least one unit test that names its REQ ID in a comment.
+- Use the generated test harness macros (`ASSERT_EVENTS_*`, `ASSERT_TLM_*`, command helpers) to check behavior.
+- Prefer neighboring component style over inventing new patterns.
+- Do not edit autocoded `*Ac.hpp` / `*Ac.cpp` or anything under `build-fprime-*`; change the model and regenerate.
+- For the pilot ticket (`TICKET.md` / `REQUIREMENTS.md`): REQ-HM-001 command/param, REQ-HM-002 threshold telemetry, REQ-HM-003 warning event on exceedance for `Ref::SignalGen`.

@@ -1,5 +1,26 @@
 # F Prime — guide for AI agents
 
+## Pilot workflow (Cursor public-sector demo)
+
+Always-loaded guidance for the governed lifecycle pilot. Rules below are
+guidance; hooks under `.cursor/hooks/` are enforcement.
+
+- **Model first:** change the component's `.fpp` (or `.fppi`) file, then
+  `fprime-util generate`, then implement handlers.
+- **Never edit autocoded files** (`*Ac.hpp`, `*Ac.cpp`, anything under
+  `build-fprime-*`). Fix the FPP model instead.
+- **TDD:** write failing unit tests, then implement until `fprime-util check`
+  passes. Report coverage with `--coverage` when available.
+- **Traceability:** every change cites requirement IDs from `REQUIREMENTS.md`
+  in tests and the PR description. Current pilot ticket: `TICKET.md`
+  (`Ref::SignalGen` high-threshold check, REQ-HM-001..003).
+- **Flight-software constraints:** no dynamic memory allocation after
+  initialization; follow the style of neighboring components.
+- **Definition of done:** unit tests green, coverage reported, requirement-to-
+  code-to-test matrix in the PR.
+
+---
+
 F Prime (F´) is a component-driven framework for flight software and embedded
 systems: components are modeled in [FPP](https://nasa.github.io/fpp/), the build
 system autocodes C++ base classes from those models, and developers implement the
