@@ -36,14 +36,16 @@ if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)(curl|wget|nc|ncat|ssh|scp|sf
 fi
 
 # Block shell writes into autocoded / build-cache paths (bypass of preToolUse).
-# - Match tee at BOL, after separators, or path-qualified (/usr/bin/tee).
-# - Match stdout redirects (>/>>) into those paths, but NOT stderr (2>, &>, 2>&1).
+# Deny when the redirect/tee DESTINATION is an autocode path — not merely when
+# the command mentions build-fprime while redirecting elsewhere (e.g. 2>/dev/null).
+# Covers: > >> >| 1> 1>> &> >& 2> 2>> into *Ac.* / build-fprime-* / build-artifacts.
+# Allows: 2>&1 (fd dup) and redirects whose target is not an autocode path.
 if echo "$command" | grep -Eq '(^|[[:space:];|&]|/)tee([[:space:]]|$)' \
   && echo "$command" | grep -Eq 'Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/'; then
   deny_cmd "write to autocoded/build-cache path"
 fi
-# stdout redirect to autocode path: '>' or '>>' not preceded by a digit (excludes 2>)
-if echo "$command" | grep -Eq '(^|[^0-9&])>>?[[:space:]]*[^|&;[:space:]]*(Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/)'; then
+if echo "$command" | grep -Eq \
+  '(^|[[:space:];|&])(>>?|>\||&>|>&|1>>?|2>>?)[[:space:]]*[^|&;[:space:]]*(Ac\.(hpp|cpp)|build-fprime-|/build-artifacts/)'; then
   deny_cmd "write to autocoded/build-cache path"
 fi
 
