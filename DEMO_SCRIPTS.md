@@ -78,7 +78,13 @@ One closing sentence: the same approved plan can later run on a cloud agent on a
 
 ## Demo 2 — BlockDriver cycle ceiling (practice)
 
-Component: `TestDeploymentsProject/Ref/BlockDriver`. Existing channel: `BD_Cycles` in `Tlm.fppi`. No threshold today. Say REQ-BD-001..003 out loud. Do not commit a requirements file.
+Jira: [NASA-2](https://mckinley-melton.atlassian.net/browse/NASA-2). Component: `TestDeploymentsProject/Ref/BlockDriver`. Existing channel: `BD_Cycles` in `Tlm.fppi`. No threshold today. Do not commit a requirements file.
+
+Same Plan-mode chat as Demo 1. First message:
+
+```
+Pull Jira NASA-2. Restate the summary, acceptance criteria, and requirement IDs. Then write the implementation plan. FPP first, then fprime-util generate, then one test per requirement, then handlers. Do not edit *Ac.hpp or *Ac.cpp. Do not change any files until I approve the plan.
+```
 
 Ask:
 
@@ -114,7 +120,13 @@ Cleanup: `git checkout -- TestDeploymentsProject/Ref/BlockDriver`.
 
 ## Demo 3 — PingReceiver ping ceiling (practice)
 
-Component: `TestDeploymentsProject/Ref/PingReceiver`. Existing telemetry: `PR_NumPings`. Existing command: `PR_StopPings`. Add a ceiling beside that command. Do not replace it.
+Jira: [NASA-3](https://mckinley-melton.atlassian.net/browse/NASA-3). Component: `TestDeploymentsProject/Ref/PingReceiver`. Existing telemetry: `PR_NumPings`. Existing command: `PR_StopPings`. Add a ceiling beside that command. Do not replace it.
+
+Same Plan-mode chat as Demo 1. First message:
+
+```
+Pull Jira NASA-3. Restate the summary, acceptance criteria, and requirement IDs. Then write the implementation plan. Do not remove PR_StopPings. FPP first, then fprime-util generate, then one test per requirement, then handlers. Do not edit *Ac.hpp or *Ac.cpp. Do not change any files until I approve the plan.
+```
 
 Ask:
 
@@ -150,7 +162,13 @@ Cleanup: `git checkout -- TestDeploymentsProject/Ref/PingReceiver`.
 
 ## Demo 4 — SendBuffApp, stop at the plan (practice)
 
-Component: `TestDeploymentsProject/Ref/SendBuffApp`. Existing telemetry: `PacketsSent`. This component is larger. The point of the rep is to notice that and refuse the build.
+Jira: [NASA-4](https://mckinley-melton.atlassian.net/browse/NASA-4). Component: `TestDeploymentsProject/Ref/SendBuffApp`. Existing telemetry: `PacketsSent`. This component is larger. The point of the rep is to notice that and refuse the build.
+
+Same Plan-mode chat. First message:
+
+```
+Pull Jira NASA-4. Restate the summary, acceptance criteria, and requirement IDs. Then write the implementation plan. FPP first, then generate, then tests, then handlers. List every file you would touch. Do not edit *Ac.hpp or *Ac.cpp. Do not change any files until I approve the plan.
+```
 
 Ask:
 
@@ -172,7 +190,13 @@ Cleanup if the agent wrote anything: `git checkout -- TestDeploymentsProject/Ref
 
 ## Demo 5 — SignalGen with interruptions (dress rehearsal)
 
-Same prompts as Demo 1. Add a person who asks one question from the Q&A bank every 3 minutes (FedRAMP scope, Privacy Mode, Copilot already Moderate, where code goes). Answer in one or two sentences, name the stage ("we are in Plan"), and continue.
+Jira: [NASA-5](https://mckinley-melton.atlassian.net/browse/NASA-5). Same product change as NASA-1. Add a person who asks one question from the Q&A bank every 3 minutes (FedRAMP scope, Privacy Mode, Copilot already Moderate, where code goes). Answer in one or two sentences, name the stage ("we are in Plan"), and continue.
+
+First message, still one Plan-mode chat:
+
+```
+Pull Jira NASA-5. It points at the SignalGen work in NASA-1. Restate the acceptance criteria, then write the implementation plan for REQ-HM-001 through REQ-HM-003. Do not change any files until I approve the plan. If you need the product detail, also pull NASA-1.
+```
 
 At the start of Build, stop the agent. Say: "If this stalls live, I do not debug the toolchain in front of the panel." Then:
 

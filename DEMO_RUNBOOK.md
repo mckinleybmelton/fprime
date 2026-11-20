@@ -13,7 +13,7 @@ The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the 
 
 ## Before the room
 
-1. Privacy Mode on; mention it in framing. Sign into the Atlassian connection. The live ticket is [NASA-1](https://mckinley-melton.atlassian.net/browse/NASA-1). Stay in one Plan-mode chat for Demo 1. Do not switch modes.
+1. Privacy Mode on; mention it in framing. Sign into the Atlassian connection. Practice tickets on the NASA board: [NASA-1](https://mckinley-melton.atlassian.net/browse/NASA-1) live SignalGen, [NASA-2](https://mckinley-melton.atlassian.net/browse/NASA-2) BlockDriver, [NASA-3](https://mckinley-melton.atlassian.net/browse/NASA-3) PingReceiver, [NASA-4](https://mckinley-melton.atlassian.net/browse/NASA-4) SendBuffApp stop-at-plan, [NASA-5](https://mckinley-melton.atlassian.net/browse/NASA-5) interrupt rehearsal. Stay in one Plan-mode chat. Do not switch modes.
 2. Start the **live** demo from `devel` (workflow only — no SignalGen feature yet):
 
    ```bash
