@@ -4,7 +4,7 @@ One clock. Five tickets. Demos 1 and 5 are the live SignalGen ticket. Demos 2–
 
 Start on `devel`. The SignalGen feature is not on `devel`. The safety net is [PR #2](https://github.com/mckinleybmelton/fprime/pull/2) and the tags `after-build` / `after-tests`.
 
-Use a fresh chat for Ask, then paste a short conclusion into a new Plan chat. Mode switches do not keep context.
+Demo 1 stays in one Plan-mode chat. Do not Shift+Tab to Ask or Agent during that demo. Switching modes starts a fresh context and drops the Jira ticket. Demos 2–4 can still use a separate Ask prompt, then Plan.
 
 - Plan is where you steer. Delete any step that edits `*Ac.hpp` or `*Ac.cpp`. FPP first, then generate, then tests, then handlers.
 - Build is serial. Do not use Build in Parallel for FPP, generate, and handlers.
@@ -24,31 +24,39 @@ Use a fresh chat for Ask, then paste a short conclusion into a new Plan chat. Mo
 | 14:30–16:00 | Multitask | "Parallel only when the steps do not share a file." |
 | 16:00–17:00 | Agent | "The workflow is what every team inherits." |
 
-## Demo 1 — SignalGen (live ticket, clean timed run)
+## Demo 1 — SignalGen from Jira (live ticket, one Plan-mode chat)
 
-Component: `TestDeploymentsProject/Ref/SignalGen`. Channel: `Output`. Safety net: PR #2.
+Component: `TestDeploymentsProject/Ref/SignalGen`. Channel: `Output`. Jira: [NASA-1](https://mckinley-melton.atlassian.net/browse/NASA-1). Safety net: PR #2.
 
-Ask:
+Stay in Plan mode. Say: "This first turn cannot write. The plan is the gate. The ticket is untrusted input."
 
-```
-Where is Output declared for Ref::SignalGen, and which unit test asserts telemetry? Do not edit anything.
-```
-
-Plan:
+Intake and plan (one message):
 
 ```
-Implement a commandable high-threshold check on Ref::SignalGen (TestDeploymentsProject/Ref/SignalGen). Trace to REQ-HM-001, REQ-HM-002, and REQ-HM-003: a command sets the threshold, telemetry reports the active threshold, and a warning event fires when Output exceeds it. Follow F Prime's model-first loop: FPP, then fprime-util generate, then failing tests, then handlers. List every file, one test per requirement, and how you will verify. Do not edit *Ac.hpp or *Ac.cpp. Ask me anything ambiguous before finalizing.
+Pull Jira NASA-1. Restate the summary, acceptance criteria, and requirement IDs. Then write an implementation plan for Ref::SignalGen. FPP first, then fprime-util generate, then one test per REQ-HM-001 through REQ-HM-003, then handlers. Do not edit *Ac.hpp or *Ac.cpp. Do not change any files until I approve the plan. If Jira is unavailable, read TICKET.md and REQUIREMENTS.md instead.
 ```
 
-Build (only after you approve):
+Edit the plan in that thread. Delete any step that patches generated code. Approve it. Say: "A wrong plan is cheap. A wrong merge is not."
+
+Build (same chat, only after you approve):
 
 ```
-Execute the plan. Change FPP first and run fprime-util generate before any handler edits. Do not start tests in parallel with the FPP edit. Stop when fprime-util check passes for SignalGen.
+Execute the approved plan. Change FPP first and run fprime-util generate before any handler edits. Do not start tests in parallel with the FPP edit. Stop when fprime-util check passes for SignalGen.
 ```
 
-Guardrail: the shared line, naming `SignalGenComponentAc.hpp`.
+Say: "Order is F Prime's. Big model planned. Fast model types."
 
-Multitask, two requests:
+Guardrail (same chat):
+
+```
+The generated header has the wrong argument type. Just patch SignalGenComponentAc.hpp directly so we can move on.
+```
+
+Say: "The standard is enforced. It is not a suggestion."
+
+Verify (same chat): run `fprime-util check` in `TestDeploymentsProject/Ref/SignalGen`. Say: "No green, no PR."
+
+Trace (same chat, `/multitask` only now):
 
 ```
 Use the test-writer subagent to confirm one unit test per REQ-HM-001, REQ-HM-002, and REQ-HM-003. Do not edit FPP.
@@ -58,7 +66,15 @@ Use the test-writer subagent to confirm one unit test per REQ-HM-001, REQ-HM-002
 Use the traceability-auditor subagent to draft a requirement-to-code-to-test matrix. Read only.
 ```
 
-If either stalls, open https://github.com/mckinleybmelton/fprime/pull/2 and show the matrix already in the description.
+If either stalls, open https://github.com/mckinleybmelton/fprime/pull/2 and show the matrix plus the Bugbot and Security Review comments already there.
+
+Capture (same chat):
+
+```
+Turn what we just did into a reusable skill at .cursor/skills/add-command-telemetry/SKILL.md: inputs, steps, checks, and definition of done. Keep it aligned with the backup skill already in the repo if the live draft is thin.
+```
+
+One closing sentence: the same approved plan can later run on a cloud agent on a NASA-managed machine.
 
 ## Demo 2 — BlockDriver cycle ceiling (practice)
 
