@@ -18,13 +18,13 @@ guidance; hooks under `.cursor/hooks/` are enforcement.
   initialization; follow the style of neighboring components.
 - **Definition of done:** unit tests green, coverage reported, requirement-to-
   code-to-test matrix in the PR.
-- **Jira:** any `NASA-*` issue moves with the work. Do not ask the user to drag
-  the card. Follow `.cursor/skills/jira-nasa-workflow/SKILL.md`. Repo files stay
+- **Jira:** follow `.cursor/skills/jira-nasa-workflow/SKILL.md`. Transition only
+  the one `NASA-*` key in the user's latest "Pull Jira" instruction. Do not
+  move any other key that is merely mentioned. Never transition NASA-1 unless
+  that pull instruction was NASA-1. NASA-4 stops at In Progress. Repo files stay
   untouched until the plan is approved. The Jira transition is not a repo edit,
-  so it still happens at approval: In Progress when the plan is approved,
-  Resolved (the board column labeled In Review) when a pull request is open,
-  Done when the user says that pull request is merged or closed. NASA-4 stops
-  at In Progress. If a transition is refused, report the error.
+  so the active ticket still moves at approval. If a transition is refused,
+  report the error.
 
 ---
 

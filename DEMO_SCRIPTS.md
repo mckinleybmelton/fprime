@@ -197,8 +197,10 @@ Jira: [NASA-5](https://mckinley-melton.atlassian.net/browse/NASA-5). Same produc
 First message, still one Plan-mode chat:
 
 ```
-Pull Jira NASA-5. It points at the SignalGen work in NASA-1. Restate the acceptance criteria, then write the implementation plan for REQ-HM-001 through REQ-HM-003. Do not change any files until I approve the plan. If you need the product detail, also pull NASA-1.
+Pull Jira NASA-5 only. Do not pull or transition NASA-1. Restate NASA-5's acceptance criteria, then write the implementation plan for REQ-HM-001 through REQ-HM-003 from that issue. Do not change any files until I approve the plan.
 ```
+
+Only NASA-5 may leave To Do. NASA-1 stays in To Do for the live demo.
 
 At the start of Build, stop the agent. Say: "If this stalls live, I do not debug the toolchain in front of the panel." Then:
 
@@ -206,4 +208,4 @@ At the start of Build, stop the agent. Say: "If this stalls live, I do not debug
 git checkout after-tests -- TestDeploymentsProject/Ref/SignalGen
 ```
 
-Run the guardrail prompt anyway so the hook still fires. For multitask, do not wait: open PR #2 and walk the matrix and the Bugbot threads. End on the capture line.
+Run the guardrail prompt anyway so the hook still fires. For multitask, do not wait: open PR #2 and walk the matrix and the Bugbot threads. That URL is a receipt. It must not move NASA-1. End on the capture line.
