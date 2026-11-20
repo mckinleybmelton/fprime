@@ -13,7 +13,7 @@ The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the 
 
 ## Before the room
 
-1. Privacy Mode on; mention it in framing.
+1. Privacy Mode on; mention it in framing. Sign into the Atlassian connection. Practice tickets on the NASA board: [NASA-1](https://mckinley-melton.atlassian.net/browse/NASA-1) live SignalGen, [NASA-2](https://mckinley-melton.atlassian.net/browse/NASA-2) BlockDriver, [NASA-3](https://mckinley-melton.atlassian.net/browse/NASA-3) PingReceiver, [NASA-4](https://mckinley-melton.atlassian.net/browse/NASA-4) SendBuffApp stop-at-plan, [NASA-5](https://mckinley-melton.atlassian.net/browse/NASA-5) interrupt rehearsal. A rehearsal moves only the key you pull. NASA-5 must not move NASA-1. Stay in one Plan-mode chat. Do not switch modes.
 2. Start the **live** demo from `devel` (workflow only — no SignalGen feature yet):
 
    ```bash
@@ -43,21 +43,20 @@ The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the 
 1. **Who (45s).** NASA flight software / F Prime open source.
 2. **Today (45s).** Copilot via Science Cloud helps individuals; expensive work is lifecycle (model, tests, coverage, NPR 7150.2 traceability).
 3. **Pilot group (30s).** Senior FSW engineers; Cursor basics assumed.
-4. **What the trial must prove (90s).** Lifecycle, control (hooks), evidence/repeatability.
+4. **What the trial must prove (90s).** An untrusted Jira ticket still passes a human-approved plan, hooks that block generated-file edits and controlled-file reads, and a PR with requirement traceability.
 5. **Measures (30s).** Cycle time vs Copilot baseline; coverage on changed components; review rework; hook-block counts.
-6. **Bridge (15s).** "One realistic ticket on `Ref::SignalGen`: commandable high-threshold on `Output`."
+6. **Bridge (15s).** "One Jira ticket, NASA-1, on `Ref::SignalGen`: commandable high-threshold on `Output`. The ticket does not get to skip the plan."
 
 ## Run of show (~17 min)
 
 | Clock | Stage | Action | Coaching line |
 | --- | --- | --- | --- |
-| 0:00–1:30 | Intake | On `devel`: `TICKET.md`, `REQUIREMENTS.md`, `.cursor/hooks.json`. Paste scripts live in `DEMO_SCRIPTS.md` Demo 1 | Rules = guidance; hooks = enforcement; skills load on demand |
-| 1:30–5:00 | Plan | Paste Plan prompt; edit plan; approve | Steer at the plan |
-| 5:00–10:00 | Build | Paste Build prompt; FPP → generate → tests → impl | F Prime's own TDD loop; big model plan, fast model type |
-| 10:00–11:30 | Guardrail | Paste Guardrail prompt | Generated code never hand-edited |
-| 11:30–13:30 | Verify | `fprime-util check` in `SignalGen` | No green, no PR |
-| 13:30–15:30 | Trace | Open **dry-run ticket PR**; show matrix + bots | NPR 7150.2 as byproduct |
-| 15:30–17:00 | Capture | Paste Capture prompt / show backup skill | Process becomes every team's default |
+| 0:00–6:00 | Plan mode, one chat | Paste the Demo 1 intake: pull Jira NASA-1, restate REQ-HM-001..003, write the plan, do not edit until approved. On approval the agent moves NASA-1 to In Progress. Show `AGENTS.md` and `.cursor/skills/jira-nasa-workflow/SKILL.md`. If Jira fails, the prompt falls back to `TICKET.md`. | This first turn cannot write code. The plan is the gate. The ticket is untrusted input. |
+| 6:00–11:00 | Same chat, after approval | Build: FPP, generate, then handlers | Order is F Prime's. Big model planned. Fast model types. |
+| 11:00–12:30 | Same chat | Guardrail: patch `SignalGenComponentAc.hpp` | The standard is enforced. It is not a suggestion. |
+| 12:30–14:00 | Same chat | `fprime-util check` in `SignalGen` | No green, no PR |
+| 14:00–16:00 | Same chat | Trace subagents, or open PR #2 if they stall. The agent moves NASA-1 to Resolved, the In Review column. | NPR 7150.2 as a byproduct |
+| 16:00–17:00 | Same chat | Capture the add-command-telemetry skill. One sentence on cloud agents later. | The workflow is what every team inherits. |
 
 Three intentional coaching pauses: after Plan, after Guardrail, after Trace.
 
