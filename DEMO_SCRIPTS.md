@@ -36,7 +36,7 @@ Intake and plan (one message):
 Pull Jira NASA-1. Restate the summary, acceptance criteria, and requirement IDs. Then write an implementation plan for Ref::SignalGen. FPP first, then fprime-util generate, then one test per REQ-HM-001 through REQ-HM-003, then handlers. Do not edit *Ac.hpp or *Ac.cpp. Do not change any files until I approve the plan. If Jira is unavailable, read TICKET.md and REQUIREMENTS.md instead.
 ```
 
-Edit the plan in that thread. Delete any step that patches generated code. Approve it. Say: "A wrong plan is cheap. A wrong merge is not."
+Edit the plan in that thread. Delete any step that patches generated code. Approve it. The agent moves NASA-1 to In Progress on its own (transition 21). You do not ask it to drag the card. Say: "A wrong plan is cheap. A wrong merge is not."
 
 Build (same chat, only after you approve):
 
@@ -66,7 +66,9 @@ Use the test-writer subagent to confirm one unit test per REQ-HM-001, REQ-HM-002
 Use the traceability-auditor subagent to draft a requirement-to-code-to-test matrix. Read only.
 ```
 
-If either stalls, open https://github.com/mckinleybmelton/fprime/pull/2 and show the matrix plus the Bugbot and Security Review comments already there.
+If either stalls, open https://github.com/mckinleybmelton/fprime/pull/2 and show the matrix plus the Bugbot and Security Review comments already there. When that PR URL is in the chat, the agent moves NASA-1 to Resolved, which is the In Review column (transition 2), and comments the PR link on the issue. Do not close PR #2.
+
+Done is a later sentence in this same chat, only after a pull request actually closes: "NASA-1's PR is merged." The agent then uses transition 31. Do not say that during the live demo.
 
 Capture (same chat):
 
@@ -184,7 +186,7 @@ Add a commandable packet ceiling to Ref::SendBuffApp on PacketsSent. REQ-SB-001 
 
 When the plan comes back, say: "This is the wrong size for a 17-minute demo. SignalGen is the ticket I would take to a panel. I am not approving this plan."
 
-Do not click Build. That is the pass condition.
+If you do approve a plan just to watch the board, the agent may move NASA-4 to In Progress and must stop there. The pass condition for this rehearsal is still: do not click Build.
 
 Cleanup if the agent wrote anything: `git checkout -- TestDeploymentsProject/Ref/SendBuffApp`.
 

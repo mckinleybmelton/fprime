@@ -51,11 +51,11 @@ The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the 
 
 | Clock | Stage | Action | Coaching line |
 | --- | --- | --- | --- |
-| 0:00–6:00 | Plan mode, one chat | Paste the Demo 1 intake: pull Jira NASA-1, restate REQ-HM-001..003, write the plan, do not edit until approved. Show `AGENTS.md`, hooks, and rules while it works. If Jira fails, the prompt falls back to `TICKET.md`. | This first turn cannot write. The plan is the gate. The ticket is untrusted input. |
+| 0:00–6:00 | Plan mode, one chat | Paste the Demo 1 intake: pull Jira NASA-1, restate REQ-HM-001..003, write the plan, do not edit until approved. On approval the agent moves NASA-1 to In Progress. Show `AGENTS.md` and `.cursor/skills/jira-nasa-workflow/SKILL.md`. If Jira fails, the prompt falls back to `TICKET.md`. | This first turn cannot write code. The plan is the gate. The ticket is untrusted input. |
 | 6:00–11:00 | Same chat, after approval | Build: FPP, generate, then handlers | Order is F Prime's. Big model planned. Fast model types. |
 | 11:00–12:30 | Same chat | Guardrail: patch `SignalGenComponentAc.hpp` | The standard is enforced. It is not a suggestion. |
 | 12:30–14:00 | Same chat | `fprime-util check` in `SignalGen` | No green, no PR |
-| 14:00–16:00 | Same chat | Trace subagents, or open PR #2 if they stall | NPR 7150.2 as a byproduct |
+| 14:00–16:00 | Same chat | Trace subagents, or open PR #2 if they stall. The agent moves NASA-1 to Resolved, the In Review column. | NPR 7150.2 as a byproduct |
 | 16:00–17:00 | Same chat | Capture the add-command-telemetry skill. One sentence on cloud agents later. | The workflow is what every team inherits. |
 
 Three intentional coaching pauses: after Plan, after Guardrail, after Trace.
