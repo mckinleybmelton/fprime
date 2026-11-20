@@ -12,6 +12,9 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 ISF-PNG-001 | The `Ref::PingReceiver` component shall reply to ping requests | System test
 ISF-PNG-002 | The `Ref::PingReceiver` component shall provide commands to disable ping responses | System test
+REQ-PR-001 | The `Ref::PingReceiver` component shall provide a command that sets the ping ceiling | Unit test
+REQ-PR-002 | The `Ref::PingReceiver` component shall report the active ping ceiling via telemetry | Unit test
+REQ-PR-003 | The `Ref::PingReceiver` component shall emit a warning event when `PR_NumPings` exceeds the ceiling | Unit test
 
 ## 3. Design
 
@@ -22,6 +25,10 @@ ISF-PNG-002 | The `Ref::PingReceiver` component shall provide commands to disabl
 The `Ref::PingReceiver` component has the following component diagram:
 
 ![`Ref::PingReceiver` Diagram](img/PingReceiverBDD.jpg "Ref::PingReceiver")
+
+### 3.2 Ping ceiling
+
+`PR_StopPings` remains the command that disables ping responses. `PR_SetPingCeiling` sets a `U32` ceiling and emits telemetry channel `PR_PingCeiling`. Until that command is accepted, the ceiling is the maximum `U32` value. Each ping still updates `PR_NumPings` with the pre-increment count. When that value is greater than the active ceiling, the component emits warning-high event `PR_PingCeilingExceeded`.
 
 ## 4. Dictionaries
 
@@ -34,6 +41,7 @@ The `Ref::PingReceiver` component has the following component diagram:
 Date | Description
 ---- | -----------
 4/20/2017 | Initial Version
+11/20/2026 | Added commandable ping ceiling (`REQ-PR-001`, `REQ-PR-002`, `REQ-PR-003`)
 
 
 
