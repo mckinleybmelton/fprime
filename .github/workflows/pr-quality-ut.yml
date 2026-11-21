@@ -1,0 +1,118 @@
+# Unit tests for components a pull request actually changes.
+# The check run name is the job name. agents/fprime-pr-quality reads that name.
+
+name: "PR Quality Unit Tests"
+
+on:
+  pull_request:
+    branches: [devel, release/**]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-quality-ut-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: "F Prime unit tests"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Run unit tests for changed components"
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${BASE_SHA}" ]]; then
+            echo "::error::Pull request base SHA is missing."
+            exit 1
+          fi
+          if ! git diff --name-only "${BASE_SHA}...HEAD" > /tmp/changed-files.txt; then
+            echo "::error::Could not diff ${BASE_SHA}...HEAD"
+            exit 1
+          fi
+
+          declare -A seen=()
+          roots=()
+          while IFS= read -r file; do
+            [[ -z "${file}" ]] && continue
+            dir=$(dirname "${file}")
+            while [[ "${dir}" != "." && "${dir}" != "/" ]]; do
+              if [[ -f "${dir}/CMakeLists.txt" && -d "${dir}/test/ut" ]]; then
+                if [[ -z "${seen[${dir}]:-}" ]]; then
+                  seen["${dir}"]=1
+                  roots+=("${dir}")
+                fi
+                break
+              fi
+              dir=$(dirname "${dir}")
+            done
+          done < /tmp/changed-files.txt
+
+          if ((${#roots[@]} == 0)); then
+            echo "::notice title=F Prime unit tests::No component with CMakeLists.txt and test/ut changed."
+            echo "No component unit-test directory changed." >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+
+          mapfile -t sorted < <(printf '%s\n' "${roots[@]}" | sort -u)
+          # Keep the pilot component in the capped set when the diff touches it.
+          preferred="TestDeploymentsProject/Ref/SignalGen"
+          ordered=()
+          for dir in "${sorted[@]}"; do
+            if [[ "${dir}" == "${preferred}" ]]; then
+              ordered=("${dir}")
+              break
+            fi
+          done
+          for dir in "${sorted[@]}"; do
+            if [[ "${dir}" != "${preferred}" ]]; then
+              ordered+=("${dir}")
+            fi
+          done
+          limit=3
+          run=("${ordered[@]:0:limit}")
+          skip=()
+          if ((${#ordered[@]} > limit)); then
+            skip=("${ordered[@]:limit}")
+          fi
+
+          if ((${#skip[@]} > 0)); then
+            skipped=$(printf '%s, ' "${skip[@]}")
+            skipped=${skipped%, }
+            echo "::notice title=F Prime unit tests::Not run (cap): ${skipped}"
+            echo "Not run (cap): ${skipped}" >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+          failed=0
+          for dir in "${run[@]}"; do
+            log=$(mktemp)
+            echo "Running fprime-util check in ${dir}" >> "${GITHUB_STEP_SUMMARY}"
+            if (cd "${dir}" && fprime-util generate --ut && fprime-util check) >"${log}" 2>&1; then
+              echo "::notice title=F Prime unit tests::Passed unit tests in ${dir}"
+            else
+              failed=1
+              excerpt=$(tail -n 20 "${log}" | tr '\n' ' ' | cut -c1-500)
+              echo "::error title=fprime-util check::${dir}: ${excerpt}"
+              {
+                echo "Failed in ${dir}"
+                tail -n 40 "${log}"
+              } >> "${GITHUB_STEP_SUMMARY}"
+            fi
+          done
+
+          if ((failed != 0)); then
+            exit 1
+          fi

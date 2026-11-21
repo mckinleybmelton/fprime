@@ -1,0 +1,30 @@
+{
+  "title": "SignalGen high threshold",
+  "headSha": "abc123",
+  "baseRef": "devel",
+  "requirements": "REQ-HM-001 The SignalGen component shall provide a command that sets a high threshold.\nREQ-HM-002 The SignalGen component shall report the active high threshold via telemetry.\nREQ-HM-003 The SignalGen component shall emit a warning event when the signal output exceeds the high threshold.",
+  "ticket": "Implement REQ-HM-001, REQ-HM-002, and REQ-HM-003 on Ref::SignalGen.",
+  "files": [
+    {
+      "path": "TestDeploymentsProject/Ref/SignalGen/SignalGen.fpp",
+      "status": "modified",
+      "patch": "async command SET_HIGH_THRESHOLD(threshold: F32)\ntelemetry HIGH_THRESHOLD: F32\nevent HighThresholdExceeded severity warning"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/SignalGen/SignalGen.cpp",
+      "status": "modified",
+      "patch": "void SignalGen :: SET_HIGH_THRESHOLD_cmdHandler(...) { this->m_highThreshold = threshold; this->tlmWrite_HIGH_THRESHOLD(threshold); }\nvoid SignalGen :: checkThreshold(F32 value) { if (value > this->m_highThreshold) { this->log_WARNING_HI_HighThresholdExceeded(); } }"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/SignalGen/test/ut/SignalGenTester.cpp",
+      "status": "modified",
+      "patch": "TEST(SignalGen, HighThresholdCommand) {\n  // REQ-HM-001\n  this->sendCmd_SET_HIGH_THRESHOLD(0, 0, 1.5);\n}\nTEST(SignalGen, HighThresholdTelemetry) {\n  // REQ-HM-002\n  ASSERT_TLM_HIGH_THRESHOLD(0, 1.5);\n}"
+    }
+  ],
+  "unitTestCheck": {
+    "name": "F Prime unit tests",
+    "state": "success",
+    "excerpt": "Passed unit tests in TestDeploymentsProject/Ref/SignalGen.",
+    "partial": false
+  }
+}

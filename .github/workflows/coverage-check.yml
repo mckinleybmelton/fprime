@@ -29,7 +29,7 @@ on:
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
-
+      - 'agents/**'
 permissions:
   contents: read
 
