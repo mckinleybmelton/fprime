@@ -1,5 +1,7 @@
 # fprime-pr-quality
 
+<!-- trigger: synchronize the pull request so the hosted reviewer wakes -->
+
 Agent SDK project (`@grok/agent-sdk`). This file is
 for coding agents editing the project. The served agent's prompt is
 `bot/instructions.md`.
