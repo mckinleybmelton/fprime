@@ -1,6 +1,6 @@
 # fprime-pr-quality
 
-<!-- trigger: synchronize the pull request so the hosted reviewer wakes -->
+<!-- trigger: retry the hosted reviewer after the usage limit was raised -->
 
 Agent SDK project (`@grok/agent-sdk`). This file is
 for coding agents editing the project. The served agent's prompt is
