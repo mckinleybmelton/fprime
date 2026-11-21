@@ -38,6 +38,18 @@ The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the 
 4. Pre-run PR for Bugbot / Security Review: https://github.com/mckinleybmelton/fprime/pull/2 (ticket dry-run), not setup https://github.com/mckinleybmelton/fprime/pull/1.
 5. Activate toolchain: `source fprime-venv/bin/activate` (and Rust 1.87+ on PATH if building Ref fully).
 
+## Cloud Agent
+
+This path replaces the desktop chat. It does not use Agent SDK. One Cloud Agent on `mckinleybmelton/fprime` at `devel` runs the same ticket, plan gate, hooks, and in-repo subagents. Model turns bill the signed-in personal account. Start it in Plan mode and paste:
+
+```
+Pull Jira NASA-1. Restate REQ-HM-001, REQ-HM-002, and REQ-HM-003 from REQUIREMENTS.md for Ref::SignalGen (TestDeploymentsProject/Ref/SignalGen). Follow F Prime's model-first TDD loop: FPP changes, generate, failing tests, implementation. List every file, the tests per requirement, and how you'll verify coverage. Ask anything ambiguous before finalizing.
+
+You are a Cloud Agent. Start from devel. Use branch cursor/signalgen-cloud-f3a7 and base devel. Before fprime-util, run: source fprime-venv/bin/activate. Do not edit the repository until this plan is approved. Do not use Agent SDK.
+```
+
+After the plan is approved, the same agent continues: FPP, `fprime-util generate`, the `test-writer` subagent, handlers, `fprime-util check --coverage` in `TestDeploymentsProject/Ref/SignalGen`, then the `traceability-auditor` subagent and the pull request. Later prompts stay in `DEMO_PROMPTS.md`. The guardrail is unchanged: a request to patch `SignalGenComponentAc.hpp` must be denied. The feature PR carries the requirement matrix, the REQ IDs, and the AI usage disclosure. Do not close PR #2.
+
 ## Framing (~5 min) — SignalGen filled in
 
 1. **Who (45s).** NASA flight software / F Prime open source.
@@ -56,7 +68,7 @@ The SignalGen feature is not on `devel`. Live Demo 1 starts there. PR #2 is the 
 | 11:00–12:30 | Same chat | Guardrail: patch `SignalGenComponentAc.hpp` | The standard is enforced. It is not a suggestion. |
 | 12:30–14:00 | Same chat | `fprime-util check` in `SignalGen` | No green, no PR |
 | 14:00–16:00 | Same chat | Trace subagents, or open PR #2 if they stall. The agent moves NASA-1 to Resolved, the In Review column. | NPR 7150.2 as a byproduct |
-| 16:00–17:00 | Same chat | Capture the add-command-telemetry skill. One sentence on cloud agents later. | The workflow is what every team inherits. |
+| 16:00–17:00 | Same chat | Capture the add-command-telemetry skill. Point at the Cloud Agent section. | The workflow is what every team inherits. |
 
 Three intentional coaching pauses: after Plan, after Guardrail, after Trace.
 
