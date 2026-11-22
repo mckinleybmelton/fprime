@@ -46,6 +46,12 @@ module Ref {
     async command PR_StopPings \
       opcode 0
 
+    @ Command to set the ping ceiling
+    async command PR_SetPingCeiling(
+                                     ceiling: U32 @< Maximum allowed ping count
+                                   ) \
+      opcode 1
+
     # ----------------------------------------------------------------------
     # Events
     # ----------------------------------------------------------------------
@@ -64,12 +70,24 @@ module Ref {
       id 1 \
       format "PingReceiver pinged with code {}"
 
+    @ Ping count exceeded the configured ceiling
+    event PR_PingsExceeded(
+                            count: U32 @< Current ping count
+                            ceiling: U32 @< Configured ceiling
+                          ) \
+      severity warning high \
+      id 2 \
+      format "Ping count {} exceeds ceiling {}"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
 
     @ Number of pings received
     telemetry PR_NumPings: U32 id 0
+
+    @ Active ping ceiling
+    telemetry PR_PingCeiling: U32 id 1
 
   }
 

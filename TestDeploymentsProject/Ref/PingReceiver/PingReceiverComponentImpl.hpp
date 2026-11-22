@@ -47,8 +47,15 @@ class PingReceiverComponentImpl final : public PingReceiverComponentBase {
                                  U32 cmdSeq           /*!< The command sequence number*/
     );
 
+    void PR_SetPingCeiling_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
+                                      U32 cmdSeq,          /*!< The command sequence number*/
+                                      U32 ceiling          /*!< Maximum allowed ping count*/
+    );
+
     bool m_inhibitPings;
     U32 m_pingsRecvd;
+    U32 m_pingCeiling;
+    bool m_ceilingExceeded;
 };
 
 }  // end namespace Ref
