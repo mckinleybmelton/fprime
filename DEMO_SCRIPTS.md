@@ -162,9 +162,9 @@ Draft a three-row requirement-to-code-to-test matrix. Read only.
 
 Cleanup: `git checkout -- TestDeploymentsProject/Ref/PingReceiver`.
 
-## Demo 4 — SendBuffApp, stop at the plan (practice)
+## Demo 4 — SendBuffApp packet ceiling (practice)
 
-Jira: [NASA-4](https://mckinley-melton.atlassian.net/browse/NASA-4). Component: `TestDeploymentsProject/Ref/SendBuffApp`. Existing telemetry: `PacketsSent`. This component is larger. The point of the rep is to notice that and refuse the build.
+Jira: [NASA-4](https://mckinley-melton.atlassian.net/browse/NASA-4). Component: `TestDeploymentsProject/Ref/SendBuffApp`. Existing telemetry: `PacketsSent`. Same lifecycle as Demos 2 and 3: approve the plan, implement, and open a pull request. Approving the plan moves NASA-4 to In Progress. Opening the pull request moves it to Resolved.
 
 Same Plan-mode chat. First message:
 
@@ -175,7 +175,7 @@ Pull Jira NASA-4. Restate the summary, acceptance criteria, and requirement IDs.
 Ask:
 
 ```
-Where is PacketsSent declared for Ref::SendBuffApp, and how large is the component compared with Ref::SignalGen? Do not edit anything.
+Where is PacketsSent declared for Ref::SendBuffApp, and which FPP files declare its commands, events, and telemetry? Do not edit anything.
 ```
 
 Plan:
@@ -184,11 +184,25 @@ Plan:
 Add a commandable packet ceiling to Ref::SendBuffApp on PacketsSent. REQ-SB-001 command, REQ-SB-002 telemetry, REQ-SB-003 warning event. FPP first, then generate, then tests, then handlers. List every file you would touch. Do not edit *Ac.hpp or *Ac.cpp. Ask before finalizing.
 ```
 
-When the plan comes back, say: "This is the wrong size for a 17-minute demo. SignalGen is the ticket I would take to a panel. I am not approving this plan."
+Build:
 
-If you do approve a plan just to watch the board, the agent may move NASA-4 to In Progress and must stop there. The pass condition for this rehearsal is still: do not click Build.
+```
+Execute the plan. FPP, then fprime-util generate, then tests, then handlers. Run fprime-util check for SendBuffApp before you stop. Open the pull request when the check passes.
+```
 
-Cleanup if the agent wrote anything: `git checkout -- TestDeploymentsProject/Ref/SendBuffApp`.
+Guardrail: shared line, naming the generated header the plan cites.
+
+Multitask:
+
+```
+Confirm one unit test names REQ-SB-001, REQ-SB-002, and REQ-SB-003. Do not edit FPP.
+```
+
+```
+Draft a three-row requirement-to-code-to-test matrix. Read only.
+```
+
+Cleanup: `git checkout -- TestDeploymentsProject/Ref/SendBuffApp`.
 
 ## Demo 5 — SignalGen with interruptions (dress rehearsal)
 
