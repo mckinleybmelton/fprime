@@ -29,7 +29,7 @@ The `Ref::PingReceiver` component has the following component diagram:
 ### 3.2 Commands
 
 - `PR_StopPings` (opcode 0): inhibits further `PingOut` replies. Does not reset the ping count.
-- `PR_SetPingCeiling` (opcode 1): stores the active `PR_NumPings` ceiling, writes `PR_PingCeiling` telemetry, and re-arms the exceedance latch when the last reported count is less than or equal to the new ceiling.
+- `PR_SetPingCeiling` (opcode 1): stores the active `PR_NumPings` ceiling, writes `PR_PingCeiling` telemetry, and re-arms the exceedance latch when the last reported count is less than or equal to the new ceiling. The constructor default ceiling is `0xFFFFFFFF` (disabled until commanded) so Health pings in Ref do not raise `PR_PingCeilingExceeded` at boot.
 
 ### 3.3 Telemetry
 
@@ -59,3 +59,4 @@ Date | Description
 ---- | -----------
 4/20/2017 | Initial Version
 11/23/2026 | NASA-3: commandable PR_NumPings ceiling (REQ-PR-001..003)
+11/23/2026 | Default ping ceiling is U32 max until PR_SetPingCeiling (no boot WARNING_HI)

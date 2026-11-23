@@ -55,6 +55,9 @@ class PingReceiverTester final : public PingReceiverGTestBase {
     //! Regression: PR_StopPings still inhibits PingOut
     void testStopPingsStillInhibits();
 
+    //! Regression: default ceiling is quiet until commanded
+    void testDefaultCeilingQuiet();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

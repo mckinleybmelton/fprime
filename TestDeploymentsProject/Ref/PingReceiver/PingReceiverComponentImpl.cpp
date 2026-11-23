@@ -23,7 +23,8 @@ PingReceiverComponentImpl ::PingReceiverComponentImpl(const char* const compName
     : PingReceiverComponentBase(compName),
       m_inhibitPings(false),
       m_pingsRecvd(0),
-      m_pingCeiling(0),
+      // Disabled until commanded: U32 max avoids WARNING_HI on Health pings at boot
+      m_pingCeiling(0xFFFFFFFFU),
       m_ceilingExceeded(false) {}
 
 PingReceiverComponentImpl ::~PingReceiverComponentImpl() {}

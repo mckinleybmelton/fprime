@@ -31,6 +31,12 @@ TEST(Nominal, testStopPingsStillInhibits) {
     tester.testStopPingsStillInhibits();
 }
 
+TEST(Nominal, testDefaultCeilingQuiet) {
+    COMMENT("Regression: default ceiling U32 max does not WARNING_HI on early pings");
+    Ref::PingReceiverTester tester;
+    tester.testDefaultCeilingQuiet();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

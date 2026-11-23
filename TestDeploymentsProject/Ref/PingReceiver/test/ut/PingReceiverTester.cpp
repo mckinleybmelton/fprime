@@ -133,4 +133,19 @@ void PingReceiverTester ::testStopPingsStillInhibits() {
     ASSERT_TLM_PR_NumPings(0, 0);
 }
 
+void PingReceiverTester ::testDefaultCeilingQuiet() {
+    this->clearHistory();
+
+    // Without PR_SetPingCeiling, Health-style early pings must not warn
+    for (U32 i = 0; i < 4; i++) {
+        this->invoke_to_PingIn(0, i + 1);
+        this->component.doDispatch();
+    }
+
+    ASSERT_EVENTS_PR_PingCeilingExceeded_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_from_PingOut_SIZE(4);
+    ASSERT_TLM_PR_NumPings(3, 3);
+}
+
 }  // namespace Ref
