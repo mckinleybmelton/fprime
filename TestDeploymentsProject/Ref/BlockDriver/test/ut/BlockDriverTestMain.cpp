@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "BlockDriverTester.hpp"
+#include "Fw/Test/UnitTest.hpp"
 
 TEST(Nominal, testDataLoopBack) {
     Ref::BlockDriverTester tester;
@@ -19,6 +20,24 @@ TEST(Nominal, testPing) {
 TEST(Nominal, testCycleIncrement) {
     Ref::BlockDriverTester tester;
     tester.testCycleIncrement();
+}
+
+TEST(Nominal, testSetCycleCeiling) {
+    REQUIREMENT("REQ-BD-001");
+    Ref::BlockDriverTester tester;
+    tester.testSetCycleCeiling();
+}
+
+TEST(Nominal, testCycleCeilingTelemetry) {
+    REQUIREMENT("REQ-BD-002");
+    Ref::BlockDriverTester tester;
+    tester.testCycleCeilingTelemetry();
+}
+
+TEST(Nominal, testCycleCeilingExceeded) {
+    REQUIREMENT("REQ-BD-003");
+    Ref::BlockDriverTester tester;
+    tester.testCycleCeilingExceeded();
 }
 
 int main(int argc, char** argv) {

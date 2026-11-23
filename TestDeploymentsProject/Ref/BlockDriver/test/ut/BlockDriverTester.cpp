@@ -79,4 +79,78 @@ void BlockDriverTester ::testCycleIncrement() {
     ASSERT_TLM_BD_Cycles(1, 1);
 }
 
+// REQ-BD-001
+void BlockDriverTester ::testSetCycleCeiling() {
+    this->clearHistory();
+
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 1, 42);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, BlockDriver::OPCODE_BD_SET_CYCLE_CEILING, 1, Fw::CmdResponse::OK);
+
+    this->clearHistory();
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 2, 7);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, BlockDriver::OPCODE_BD_SET_CYCLE_CEILING, 2, Fw::CmdResponse::OK);
+    ASSERT_TLM_BD_CycleCeiling(0, 7);
+}
+
+// REQ-BD-002
+void BlockDriverTester ::testCycleCeilingTelemetry() {
+    this->clearHistory();
+    ASSERT_TLM_BD_CycleCeiling_SIZE(0);
+
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 1, 42);
+    this->component.doDispatch();
+
+    ASSERT_TLM_BD_CycleCeiling_SIZE(1);
+    ASSERT_TLM_BD_CycleCeiling(0, 42);
+
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 2, 7);
+    this->component.doDispatch();
+
+    ASSERT_TLM_BD_CycleCeiling_SIZE(2);
+    ASSERT_TLM_BD_CycleCeiling(1, 7);
+
+    this->clearHistory();
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_TLM_BD_Cycles(0, 0);
+    ASSERT_TLM_BD_CycleCeiling_SIZE(0);
+}
+
+// REQ-BD-003
+void BlockDriverTester ::testCycleCeilingExceeded() {
+    this->clearHistory();
+
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 1, 1);
+    this->component.doDispatch();
+
+    // cycle 1: BD_Cycles = 0, below ceiling
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(0);
+
+    // cycle 2: BD_Cycles = 1, equal to ceiling (strict >)
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(0);
+
+    // cycle 3: BD_Cycles = 2, first exceedance
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(1);
+    ASSERT_EVENTS_BD_CycleCeilingExceeded(0, 2, 1);
+
+    // cycle 4: still above ceiling; latch suppresses a second warning
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(1);
+    ASSERT_EVENTS_SIZE(1);
+}
+
 }  // namespace Ref

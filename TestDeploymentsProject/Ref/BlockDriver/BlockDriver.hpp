@@ -26,8 +26,18 @@ class BlockDriver final : public BlockDriverComponentBase {
                         U32 key                    /*!< Value to return to pinger*/
                         ) override;
 
+    //! Handler implementation for command BD_SET_CYCLE_CEILING
+    void BD_SET_CYCLE_CEILING_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
+                                         U32 cmdSeq,          /*!< The command sequence number*/
+                                         U32 ceiling          /*!< Cycle count ceiling*/
+                                         ) override;
+
     // cycle count
     U32 m_cycles;
+    // configured BD_Cycles ceiling
+    U32 m_cycleCeiling;
+    // true after BD_Cycles has exceeded the ceiling until re-armed
+    bool m_ceilingExceeded;
     // true while a SchedInternal message is on the queue
     std::atomic<bool> m_schedQueued;
 };

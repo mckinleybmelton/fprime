@@ -70,6 +70,7 @@ telemetry packets RefPackets {
     recvBuffComp.Parameter1
     recvBuffComp.Parameter2
     blockDrv.BD_Cycles
+    blockDrv.BD_CycleCeiling
   }
 
   packet SigGenSum id 4 group 1 {

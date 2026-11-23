@@ -52,6 +52,15 @@ class BlockDriverTester final : public BlockDriverGTestBase {
     //! Test ISR cycle increment
     void testCycleIncrement();
 
+    //! REQ-BD-001: command sets the cycle ceiling
+    void testSetCycleCeiling();
+
+    //! REQ-BD-002: telemetry reports the active ceiling
+    void testCycleCeilingTelemetry();
+
+    //! REQ-BD-003: warning when BD_Cycles exceeds the ceiling
+    void testCycleCeilingExceeded();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
