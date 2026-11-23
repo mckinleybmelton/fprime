@@ -52,6 +52,11 @@ class SignalGen final : public SignalGenComponentBase {
                        U32 records,
                        U32 priority) final;
 
+    //! Set high threshold for signal Output (REQ-HM-001)
+    void SetHighThreshold_cmdHandler(FwOpcodeType opCode,
+                                     U32 cmdSeq,
+                                     F32 threshold) final;
+
     // ----------------------------------------------------------------------
     // Handler implementations for data products
     // ----------------------------------------------------------------------
@@ -87,6 +92,8 @@ class SignalGen final : public SignalGenComponentBase {
     SignalPairSet sigPairHistory;
     bool running;
     bool skipOne;
+    F32 highThreshold;              //!< high threshold for Output (REQ-HM-001/002)
+    bool highThresholdArmed;        //!< true after SetHighThreshold (REQ-HM-003)
     DpContainer m_dpContainer;
     bool m_dpInProgress;            //!< flag to indicate data products are being generated
     U32 m_numDps;                   //!< number of DPs to store

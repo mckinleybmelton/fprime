@@ -21,3 +21,6 @@ telemetry DpBytes: U32 id 6
 
 @ DP records written
 telemetry DpRecords: U32 id 7
+
+@ Active high threshold for signal Output (REQ-HM-002)
+telemetry HighThreshold: F32 id 8 format "{.4f}"
