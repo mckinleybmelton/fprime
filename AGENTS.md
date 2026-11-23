@@ -21,8 +21,10 @@ guidance; hooks under `.cursor/hooks/` are enforcement.
 - **Jira:** follow `.cursor/skills/jira-nasa-workflow/SKILL.md`. Transition only
   the one `NASA-*` key in the user's latest "Pull Jira" instruction. Do not
   move any other key that is merely mentioned. Never transition NASA-1 unless
-  that pull instruction was NASA-1. NASA-4 stops at In Progress. Repo files stay
-  untouched until the plan is approved. The Jira transition is not a repo edit,
+  that pull instruction was NASA-1. Every NASA key, including NASA-4, follows
+  the same path: In Progress on approval, implement, then Resolved when its
+  pull request opens. Repo files stay untouched until the plan is approved.
+  The Jira transition is not a repo edit,
   so the active ticket still moves at approval. If a transition is refused,
   report the error.
 
