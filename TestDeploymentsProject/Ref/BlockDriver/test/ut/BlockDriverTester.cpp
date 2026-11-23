@@ -153,4 +153,36 @@ void BlockDriverTester ::testCycleCeilingExceeded() {
     ASSERT_EVENTS_SIZE(1);
 }
 
+// REQ-BD-003 (latch keep / re-arm)
+void BlockDriverTester ::testCycleCeilingReArm() {
+    this->clearHistory();
+
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 1, 0);
+    this->component.doDispatch();
+
+    // First cycle reports 0 (does not exceed 0). Second reports 1 and fires once.
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(1);
+    ASSERT_EVENTS_BD_CycleCeilingExceeded(0, 1, 0);
+
+    // Last reported BD_Cycles is 1. A still-too-low ceiling must keep the latch set.
+    this->clearHistory();
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 2, 0);
+    this->component.doDispatch();
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(0);
+
+    // Last reported value is 2 (m_cycles == 3). Ceiling 2 re-arms; next sample is 3 and fires.
+    this->sendCmd_BD_SET_CYCLE_CEILING(0, 3, 2);
+    this->component.doDispatch();
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(1);
+    ASSERT_EVENTS_BD_CycleCeilingExceeded(0, 3, 2);
+}
+
 }  // namespace Ref

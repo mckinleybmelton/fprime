@@ -40,6 +40,12 @@ TEST(Nominal, testCycleCeilingExceeded) {
     tester.testCycleCeilingExceeded();
 }
 
+TEST(Nominal, testCycleCeilingReArm) {
+    REQUIREMENT("REQ-BD-003");
+    Ref::BlockDriverTester tester;
+    tester.testCycleCeilingReArm();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -61,6 +61,9 @@ class BlockDriverTester final : public BlockDriverGTestBase {
     //! REQ-BD-003: warning when BD_Cycles exceeds the ceiling
     void testCycleCeilingExceeded();
 
+    //! REQ-BD-003: latch stays when new ceiling is still too low; re-arms when raised
+    void testCycleCeilingReArm();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions
