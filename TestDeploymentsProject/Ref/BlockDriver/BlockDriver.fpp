@@ -31,6 +31,21 @@ module Ref {
     # Special ports
     # ----------------------------------------------------------------------
 
+    @ Command receive port
+    command recv port CmdDisp
+
+    @ Command registration port
+    command reg port CmdReg
+
+    @ Command response port
+    command resp port CmdStatus
+
+    @ Event port
+    event port Log
+
+    @ Text event port
+    text event port LogText
+
     @ Time get port
     time get port Time
 
@@ -38,10 +53,22 @@ module Ref {
     telemetry port Tlm
 
     # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    include "Commands.fppi"
+
+    # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
 
     include "Tlm.fppi"
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    include "Events.fppi"
 
   }
 

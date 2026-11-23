@@ -21,6 +21,24 @@ TEST(Nominal, testCycleIncrement) {
     tester.testCycleIncrement();
 }
 
+// REQ-BD-001
+TEST(CycleCeiling, SetCommand) {
+    Ref::BlockDriverTester tester;
+    tester.test_set_cycle_ceiling_command();
+}
+
+// REQ-BD-002
+TEST(CycleCeiling, Telemetry) {
+    Ref::BlockDriverTester tester;
+    tester.test_cycle_ceiling_telemetry();
+}
+
+// REQ-BD-003
+TEST(CycleCeiling, ExceededEvent) {
+    Ref::BlockDriverTester tester;
+    tester.test_cycle_ceiling_exceeded_event();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

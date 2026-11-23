@@ -64,7 +64,7 @@ void BlockDriverTester ::testCycleIncrement() {
     this->invoke_to_Sched(0, 0);
     this->component.doDispatch();
 
-    // there shall be one report with 0 cycle
+    // there shall be one report with 0 cycle (ceiling not armed)
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_BD_Cycles_SIZE(1);
     ASSERT_TLM_BD_Cycles(0, 0);
@@ -77,6 +77,44 @@ void BlockDriverTester ::testCycleIncrement() {
     ASSERT_TLM_SIZE(2);
     ASSERT_TLM_BD_Cycles_SIZE(2);
     ASSERT_TLM_BD_Cycles(1, 1);
+}
+
+// REQ-BD-001
+void BlockDriverTester ::test_set_cycle_ceiling_command() {
+    this->clearHistory();
+    sendCmd_BD_SetCycleCeiling(0, 0, 5);
+    component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, BlockDriver::OPCODE_BD_SETCYCLECEILING, 0, Fw::CmdResponse::OK);
+}
+
+// REQ-BD-002
+void BlockDriverTester ::test_cycle_ceiling_telemetry() {
+    this->clearHistory();
+    const U32 ceiling = 7;
+    sendCmd_BD_SetCycleCeiling(0, 0, ceiling);
+    component.doDispatch();
+    ASSERT_TLM_BD_CycleCeiling_SIZE(1);
+    ASSERT_TLM_BD_CycleCeiling(0, ceiling);
+}
+
+// REQ-BD-003
+void BlockDriverTester ::test_cycle_ceiling_exceeded_event() {
+    this->clearHistory();
+    sendCmd_BD_SetCycleCeiling(0, 0, 0);
+    component.doDispatch();
+    this->clearEvents();
+
+    // First cycle reports BD_Cycles == 0 (not greater than ceiling)
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(0);
+
+    // Second cycle reports BD_Cycles == 1, which exceeds ceiling 0
+    this->invoke_to_Sched(0, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_BD_CycleCeilingExceeded_SIZE(1);
+    ASSERT_EVENTS_BD_CycleCeilingExceeded(0, 1, 0);
 }
 
 }  // namespace Ref
