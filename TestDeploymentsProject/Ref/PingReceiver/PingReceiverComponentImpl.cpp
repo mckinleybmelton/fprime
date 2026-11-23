@@ -20,7 +20,12 @@ namespace Ref {
 // ----------------------------------------------------------------------
 
 PingReceiverComponentImpl ::PingReceiverComponentImpl(const char* const compName)
-    : PingReceiverComponentBase(compName), m_inhibitPings(false), m_pingsRecvd(0) {}
+    : PingReceiverComponentBase(compName),
+      m_inhibitPings(false),
+      m_pingsRecvd(0),
+      m_pingCeiling(0),
+      m_monitoringEnabled(false),
+      m_exceedanceLatched(false) {}
 
 PingReceiverComponentImpl ::~PingReceiverComponentImpl() {}
 
@@ -30,7 +35,19 @@ PingReceiverComponentImpl ::~PingReceiverComponentImpl() {}
 
 void PingReceiverComponentImpl ::PingIn_handler(const FwIndexType portNum, U32 key) {
     // this->log_DIAGNOSTIC_PR_PingReceived(key);
-    this->tlmWrite_PR_NumPings(this->m_pingsRecvd++);
+    const U32 reported = this->m_pingsRecvd;
+    this->tlmWrite_PR_NumPings(reported);
+    this->m_pingsRecvd++;
+    if (this->m_monitoringEnabled) {
+        if (reported > this->m_pingCeiling) {
+            if (not this->m_exceedanceLatched) {
+                this->log_WARNING_HI_PR_PingCeilingExceeded(reported, this->m_pingCeiling);
+                this->m_exceedanceLatched = true;
+            }
+        } else {
+            this->m_exceedanceLatched = false;
+        }
+    }
     if (not this->m_inhibitPings) {
         PingOut_out(0, key);
     }
@@ -40,6 +57,15 @@ void PingReceiverComponentImpl::PR_StopPings_cmdHandler(FwOpcodeType opCode, /*!
                                                         U32 cmdSeq           /*!< The command sequence number*/
 ) {
     this->m_inhibitPings = true;
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void PingReceiverComponentImpl::PR_SetPingCeiling_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 ceiling) {
+    this->m_pingCeiling = ceiling;
+    this->m_monitoringEnabled = true;
+    this->m_exceedanceLatched = false;
+    this->tlmWrite_PR_PingCeiling(ceiling);
+    this->log_ACTIVITY_HI_PR_PingCeilingSet(ceiling);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
