@@ -14,6 +14,7 @@
 #include <Ref/SignalGen/SignalGen.hpp>
 #include <cmath>
 #include <cstdlib>
+#include <limits>
 
 // TKC - don't know why it's undefined in VxWorks
 #ifdef TGT_OS_TYPE_VXWORKS
@@ -42,7 +43,10 @@ SignalGen ::SignalGen(const char* name)
       m_numDps(0),
       m_currDp(0),
       m_dpBytes(0),
-      m_dpPriority(0) {}
+      m_dpPriority(0),
+      m_highThreshold(std::numeric_limits<F32>::max()),
+      m_lastOutput(0.0f),
+      m_thresholdExceeded(false) {}
 
 SignalGen ::~SignalGen() {}
 
@@ -129,6 +133,14 @@ void SignalGen::schedIn_handler(FwIndexType portNum, /*!< The port number*/
     this->tlmWrite_History(this->sigHistory);
     this->tlmWrite_PairHistory(this->sigPairHistory);
     this->tlmWrite_Info(sigInfo);
+    this->tlmWrite_HighThreshold(this->m_highThreshold);
+
+    // High-threshold check on Output (REQ-HM-003): once per crossing, strict >
+    this->m_lastOutput = value;
+    if ((value > this->m_highThreshold) && (not this->m_thresholdExceeded)) {
+        this->log_WARNING_HI_HighThresholdExceeded(value, this->m_highThreshold);
+        this->m_thresholdExceeded = true;
+    }
 
     // if a Data product is being generated, store a record
     if (this->m_dpInProgress) {
@@ -196,6 +208,24 @@ void SignalGen::Skip_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
                                 U32 cmdSeq           /*!< The command sequence number*/
 ) {
     this->skipOne = true;
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void SignalGen::SetHighThreshold_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
+                                            U32 cmdSeq,          /*!< The command sequence number*/
+                                            F32 threshold) {
+    this->m_highThreshold = threshold;
+    this->tlmWrite_HighThreshold(this->m_highThreshold);
+
+    // Re-arm latch when current output no longer exceeds the new threshold
+    if (this->m_lastOutput <= this->m_highThreshold) {
+        this->m_thresholdExceeded = false;
+    } else if (not this->m_thresholdExceeded) {
+        // Threshold lowered below current Output: warn once immediately
+        this->log_WARNING_HI_HighThresholdExceeded(this->m_lastOutput, this->m_highThreshold);
+        this->m_thresholdExceeded = true;
+    }
+
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

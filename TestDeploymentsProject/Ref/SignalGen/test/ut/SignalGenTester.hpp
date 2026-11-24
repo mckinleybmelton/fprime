@@ -44,9 +44,21 @@ class SignalGenTester : public SignalGenGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    //! To do
+    //! Existing nominal start / DP smoke test
     //!
     void test_start();
+
+    //! REQ-HM-001: SetHighThreshold command sets the high threshold
+    //!
+    void testSetHighThreshold();
+
+    //! REQ-HM-002: HighThreshold telemetry reports the active threshold
+    //!
+    void testHighThresholdTelemetry();
+
+    //! REQ-HM-003: HighThresholdExceeded fires when Output exceeds threshold
+    //!
+    void testHighThresholdExceeded();
 
   private:
     // ----------------------------------------------------------------------
@@ -60,6 +72,10 @@ class SignalGenTester : public SignalGenGTestBase {
     //! Initialize components
     //!
     void initComponents();
+
+    //! Dispatch pending commands via the component queue
+    //!
+    void dispatchCommands();
 
   private:
     //! Handle a data product get from the component under test
