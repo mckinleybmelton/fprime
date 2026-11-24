@@ -52,6 +52,14 @@ class SignalGen final : public SignalGenComponentBase {
                        U32 records,
                        U32 priority) final;
 
+    //! Handler implementation for command SetHighThreshold
+    //!
+    //! Set the high threshold for Output telemetry
+    void SetHighThreshold_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                                     U32 cmdSeq,           //!< The command sequence number
+                                     F32 threshold         //!< High threshold for Output
+                                     ) final;
+
     // ----------------------------------------------------------------------
     // Handler implementations for data products
     // ----------------------------------------------------------------------
@@ -93,6 +101,9 @@ class SignalGen final : public SignalGenComponentBase {
     U32 m_currDp;                   //!< current DP number
     U32 m_dpBytes;                  //!< currently serialized records
     FwDpPriorityType m_dpPriority;  //!< stored priority for current DP
+    F32 m_highThreshold;            //!< active high threshold for Output
+    bool m_thresholdExceeded;       //!< latch: warning already emitted for current exceedance
+    F32 m_lastOutput;               //!< most recent Output sample (for re-arm / immediate fire)
 };
 }  // namespace Ref
 #endif

@@ -48,6 +48,66 @@ void SignalGenTester ::test_start() {
     ASSERT_PRODUCT_SEND_SIZE(1);
 }
 
+// REQ-HM-001: command sets the high threshold for Output
+void SignalGenTester ::testSetHighThreshold() {
+    const F32 threshold = 5.0f;
+    this->clearHistory();
+    this->sendCmd_SetHighThreshold(0, 0, threshold);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SignalGen::OPCODE_SETHIGHTHRESHOLD, 0, Fw::CmdResponse::OK);
+}
+
+// REQ-HM-002: telemetry reports the active high threshold
+void SignalGenTester ::testHighThresholdTelemetry() {
+    const F32 threshold = 12.5f;
+    this->clearHistory();
+    this->sendCmd_SetHighThreshold(0, 0, threshold);
+    this->component.doDispatch();
+    ASSERT_TLM_HighThreshold_SIZE(1);
+    ASSERT_TLM_HighThreshold(0, threshold);
+
+    // Also published each sched cycle while running
+    this->sendCmd_Toggle(0, 1);
+    this->component.doDispatch();
+    this->clearHistory();
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_TLM_HighThreshold_SIZE(1);
+    ASSERT_TLM_HighThreshold(0, threshold);
+}
+
+// REQ-HM-003: warning event fires when Output exceeds the configured threshold
+void SignalGenTester ::testHighThresholdExceeded() {
+    const F32 threshold = 0.5f;
+    const F32 amplitude = 2.0f;
+
+    this->clearHistory();
+    this->sendCmd_SetHighThreshold(0, 0, threshold);
+    this->component.doDispatch();
+    this->sendCmd_Settings(0, 1, 1, amplitude, 0.0f, Ref::SignalType::SQUARE);
+    this->component.doDispatch();
+    this->sendCmd_Toggle(0, 2);
+    this->component.doDispatch();
+
+    this->clearEvents();
+    // First sample of SQUARE with positive amplitude is +amplitude (> threshold)
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_HighThresholdExceeded_SIZE(1);
+    ASSERT_EVENTS_HighThresholdExceeded(0, amplitude, threshold);
+
+    // Further samples while still above must not re-emit (once-per-crossing latch)
+    this->invoke_to_schedIn(0, 0);
+    ASSERT_EVENTS_HighThresholdExceeded_SIZE(1);
+
+    // Raise threshold above current output to re-arm, then lower again to fire once more
+    this->sendCmd_SetHighThreshold(0, 3, amplitude + 1.0f);
+    this->component.doDispatch();
+    this->clearEvents();
+    this->sendCmd_SetHighThreshold(0, 4, threshold);
+    this->component.doDispatch();
+    ASSERT_EVENTS_HighThresholdExceeded_SIZE(1);
+}
+
 //! Handle a text event
 void SignalGenTester::textLogIn(FwEventIdType id,                //!< The event ID
                                 const Fw::Time& timeTag,         //!< The time

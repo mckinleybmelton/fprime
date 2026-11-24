@@ -48,6 +48,15 @@ class SignalGenTester : public SignalGenGTestBase {
     //!
     void test_start();
 
+    //! REQ-HM-001: SetHighThreshold command stores the high threshold
+    void testSetHighThreshold();
+
+    //! REQ-HM-002: HighThreshold telemetry reports the active threshold
+    void testHighThresholdTelemetry();
+
+    //! REQ-HM-003: HighThresholdExceeded warning on Output exceedance
+    void testHighThresholdExceeded();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
