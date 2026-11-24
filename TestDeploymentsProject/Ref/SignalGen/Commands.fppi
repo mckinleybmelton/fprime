@@ -29,3 +29,9 @@ async command Dp(
                   ) \
   opcode 3
 
+@ Set the high threshold for Output telemetry
+async command SetHighThreshold(
+                                 threshold: F32 @< High threshold for Output
+                               ) \
+  opcode 4
+

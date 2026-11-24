@@ -60,3 +60,12 @@ event DpMemReceived(
   severity activity low \
   id 8 \
   format "Received {} bytes for DP"
+
+@ Output exceeded the configured high threshold
+event HighThresholdExceeded(
+                                 $output: F32 @< Current Output value
+                                 threshold: F32 @< Active high threshold
+                               ) \
+  severity warning high \
+  id 9 \
+  format "Output {f} exceeded high threshold {f}"

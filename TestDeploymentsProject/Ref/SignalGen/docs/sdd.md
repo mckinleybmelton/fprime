@@ -12,6 +12,9 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 REF-SGN-001 | The `Ref::SignalGen` component shall generate telemetry with tunable waveforms | System test
 REF-SGN-002 | The `Ref::SignalGen` component shall store waveform data using data products | System test
+REQ-HM-001 | The component shall provide a command that sets a high threshold for signal `Output` | Unit test
+REQ-HM-002 | The component shall report the active high threshold via telemetry channel `HighThreshold` | Unit test
+REQ-HM-003 | The component shall emit warning-severity event `HighThresholdExceeded` when `Output` exceeds the configured high threshold (once per crossing) | Unit test
 
 ## 3. Design
 
@@ -41,6 +44,7 @@ Date | Description
 ---- | -----------
 4/20/2017 | Initial Version
 4/26/2024 | Added data product demonstration
+11/24/2026 | Added commandable high-threshold check (REQ-HM-001..003)
 
 
 
