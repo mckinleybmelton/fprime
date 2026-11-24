@@ -46,7 +46,8 @@ SignalGen ::SignalGen(const char* name)
       m_dpPriority(0),
       m_highThreshold(std::numeric_limits<F32>::max()),
       m_thresholdExceeded(false),
-      m_lastOutput(0.0f) {}
+      m_lastOutput(0.0f),
+      m_haveOutputSample(false) {}
 
 SignalGen ::~SignalGen() {}
 
@@ -136,6 +137,7 @@ void SignalGen::schedIn_handler(FwIndexType portNum, /*!< The port number*/
     this->tlmWrite_HighThreshold(this->m_highThreshold);
 
     this->m_lastOutput = value;
+    this->m_haveOutputSample = true;
     // REQ-HM-003: warn once per crossing when Output exceeds the high threshold
     if ((value > this->m_highThreshold) && (not this->m_thresholdExceeded)) {
         this->log_WARNING_HI_HighThresholdExceeded(value, this->m_highThreshold);
@@ -266,13 +268,16 @@ void SignalGen::SetHighThreshold_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, F32
     this->m_highThreshold = threshold;
     this->tlmWrite_HighThreshold(this->m_highThreshold);
 
-    // Re-arm if the new threshold is at or above the last Output sample
-    if (this->m_lastOutput <= this->m_highThreshold) {
-        this->m_thresholdExceeded = false;
-    } else if (not this->m_thresholdExceeded) {
-        // Lowering the threshold below current Output: warn once immediately
-        this->log_WARNING_HI_HighThresholdExceeded(this->m_lastOutput, this->m_highThreshold);
-        this->m_thresholdExceeded = true;
+    // Only compare against m_lastOutput after a real schedIn sample exists.
+    // Before that, m_lastOutput is the boot sentinel 0.0f and must not trip the latch.
+    if (this->m_haveOutputSample) {
+        if (this->m_lastOutput <= this->m_highThreshold) {
+            this->m_thresholdExceeded = false;
+        } else if (not this->m_thresholdExceeded) {
+            // Lowering the threshold below current Output: warn once immediately
+            this->log_WARNING_HI_HighThresholdExceeded(this->m_lastOutput, this->m_highThreshold);
+            this->m_thresholdExceeded = true;
+        }
     }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

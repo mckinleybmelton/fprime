@@ -104,6 +104,7 @@ class SignalGen final : public SignalGenComponentBase {
     F32 m_highThreshold;            //!< active high threshold for Output
     bool m_thresholdExceeded;       //!< latch: warning already emitted for current exceedance
     F32 m_lastOutput;               //!< most recent Output sample (for re-arm / immediate fire)
+    bool m_haveOutputSample;        //!< true once schedIn has produced a real Output sample
 };
 }  // namespace Ref
 #endif

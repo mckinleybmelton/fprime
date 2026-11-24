@@ -81,12 +81,19 @@ void SignalGenTester ::testHighThresholdExceeded() {
     const F32 threshold = 0.5f;
     const F32 amplitude = 2.0f;
 
+    // Before any Output sample, a below-zero threshold must not fabricate a warning
+    // from the boot m_lastOutput sentinel (0.0f).
     this->clearHistory();
-    this->sendCmd_SetHighThreshold(0, 0, threshold);
+    this->sendCmd_SetHighThreshold(0, 0, -1.0f);
     this->component.doDispatch();
-    this->sendCmd_Settings(0, 1, 1, amplitude, 0.0f, Ref::SignalType::SQUARE);
+    ASSERT_EVENTS_HighThresholdExceeded_SIZE(0);
+
+    this->clearHistory();
+    this->sendCmd_SetHighThreshold(0, 1, threshold);
     this->component.doDispatch();
-    this->sendCmd_Toggle(0, 2);
+    this->sendCmd_Settings(0, 2, 1, amplitude, 0.0f, Ref::SignalType::SQUARE);
+    this->component.doDispatch();
+    this->sendCmd_Toggle(0, 3);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -100,10 +107,10 @@ void SignalGenTester ::testHighThresholdExceeded() {
     ASSERT_EVENTS_HighThresholdExceeded_SIZE(1);
 
     // Raise threshold above current output to re-arm, then lower again to fire once more
-    this->sendCmd_SetHighThreshold(0, 3, amplitude + 1.0f);
+    this->sendCmd_SetHighThreshold(0, 4, amplitude + 1.0f);
     this->component.doDispatch();
     this->clearEvents();
-    this->sendCmd_SetHighThreshold(0, 4, threshold);
+    this->sendCmd_SetHighThreshold(0, 5, threshold);
     this->component.doDispatch();
     ASSERT_EVENTS_HighThresholdExceeded_SIZE(1);
 }
